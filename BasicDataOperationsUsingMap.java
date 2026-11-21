@@ -3,15 +3,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 /**
  * Клас BasicDataOperationsUsingMap реалізує операції з колекціями типу Map для зберігання пар ключ-значення.
  *
- * <p>Ключ - record {@link Oak} з характеристиками дуба, значення - місце зростання дуба.</p>
+ * <p>Ключ - record {@link Orchid} з характеристиками орхідеї, значення - назва квіткової крамниці.</p>
  *
  * <p>Операції, які виконуються для кожного типу Map:</p>
  * <ul>
@@ -26,105 +26,109 @@ import java.util.TreeMap;
  * </ul>
  */
 public class BasicDataOperationsUsingMap {
-    private static final Oak KEY_TO_SEARCH_AND_DELETE = new Oak("Дуб скельний", 120);
-    private static final Oak KEY_TO_ADD = new Oak("Дуб монгольський", 70);
+    private static final Orchid KEY_TO_SEARCH_AND_DELETE = new Orchid("Ванда", 15);
+    private static final Orchid KEY_TO_ADD = new Orchid("Пафіопедилум", 2);
 
-    private static final String VALUE_TO_SEARCH_AND_DELETE = "Софіївка";
-    private static final String VALUE_TO_ADD = "Тростянець";
+    private static final String VALUE_TO_SEARCH_AND_DELETE = "Флора";
+    private static final String VALUE_TO_ADD = "Букет";
 
     /**
-     * Компаратор для сортування Map.Entry за значеннями String (місцем зростання).
+     * Компаратор для сортування Map.Entry за значеннями String (назвою квіткової крамниці).
      * Використовує природний порядок рядків - String.compareTo().
      */
-    private static final Comparator<Map.Entry<Oak, String>> CUSTOM_COMPARATOR = Map.Entry.comparingByValue();
+    private static final Comparator<Map.Entry<Orchid, String>> FLOWER_SHOP_COMPARATOR = Map.Entry.comparingByValue();
 
-    private HashMap<Oak, String> hashMap;
-    private TreeMap<Oak, String> treeMap;
+    private HashMap<Orchid, String> hashMap;
+    private LinkedHashMap<Orchid, String> linkedHashMap;
 
     /**
-     * Record Oak зберігає характеристики дуба: вид (species) і вік (age).
+     * Прапорець: true, якщо linkedHashMap заповнена у відсортованому порядку ключів.
+     * Лише тоді перший і останній записи LinkedHashMap є найменшим і найбільшим ключами.
+     */
+    private boolean linkedHashMapSorted = false;
+
+    /**
+     * Record Orchid зберігає характеристики орхідеї: рід (genus) і кількість квіток (flowerCount).
      *
      * <p>Record автоматично генерує:</p>
      * <ul>
-     *   <li>приватні final поля species і age та канонічний конструктор;</li>
-     *   <li>методи доступу species() і age();</li>
-     *   <li>equals() і hashCode(), які враховують усі компоненти record (species і age).</li>
+     *   <li>приватні final поля genus і flowerCount та канонічний конструктор;</li>
+     *   <li>методи доступу genus() і flowerCount();</li>
+     *   <li>equals() і hashCode(), які враховують усі компоненти record (genus і flowerCount).</li>
      * </ul>
      *
      * <p>Вручну реалізовано:</p>
      * <ul>
-     *   <li>compareTo() - природний порядок: вид за зростанням, потім вік за спаданням;</li>
-     *   <li>toString() - формат Oak{species='...', age=...}, доповнений хеш-кодом.</li>
+     *   <li>compareTo() - природний порядок: рід за зростанням, потім кількість квіток за спаданням;</li>
+     *   <li>toString() - формат Orchid{genus='...', flowerCount=...}, доповнений хеш-кодом.</li>
      * </ul>
      *
-     * @param species вид дуба, наприклад "Дуб звичайний"
-     * @param age вік дерева, років
+     * @param genus рід орхідеї, наприклад "Фаленопсис"
+     * @param flowerCount кількість квіток
      */
-    public record Oak(String species, Integer age) implements Comparable<Oak> {
+    public record Orchid(String genus, Integer flowerCount) implements Comparable<Orchid> {
 
         /**
          * Компактний конструктор перевіряє, що характеристики задані.
          * Завдяки цьому в compareTo() не потрібно окремо обробляти значення null.
          */
-        public Oak {
-            Objects.requireNonNull(species, "species не може бути null");
-            Objects.requireNonNull(age, "age не може бути null");
+        public Orchid {
+            Objects.requireNonNull(genus, "genus не може бути null");
+            Objects.requireNonNull(flowerCount, "flowerCount не може бути null");
         }
 
         /**
-         * Порівнює цей дуб з іншим для визначення природного порядку сортування.
+         * Порівнює цю орхідею з іншою для визначення природного порядку сортування.
          *
-         * <p>Критерій порівняння: вид (species) за зростанням, а для однакових видів - вік (age) за спаданням.</p>
+         * <p>Критерій порівняння: рід (genus) за зростанням, а для однакових родів -
+         * кількість квіток (flowerCount) за спаданням.</p>
          *
-         * <p>Метод використовується:</p>
-         * <ul>
-         *   <li>TreeMap - для автоматичного впорядкування ключів;</li>
-         *   <li>Collections.sort() - для сортування списку ключів.</li>
-         * </ul>
+         * <p>Метод використовується Collections.sort() і Collections.min()/max()
+         * для впорядкування ключів.</p>
          *
          * <p>Метод узгоджений з equals(): compareTo() повертає 0 тоді й лише тоді,
-         * коли species і age однакові, тобто коли equals() повертає true.</p>
+         * коли genus і flowerCount однакові, тобто коли equals() повертає true.</p>
          *
-         * @param other дуб для порівняння
-         * @return від'ємне число, якщо цей дуб іде раніше за other; 0, якщо вони рівні;
-         *         додатне число, якщо цей дуб іде пізніше за other
+         * @param other орхідея для порівняння
+         * @return від'ємне число, якщо ця орхідея іде раніше за other; 0, якщо вони рівні;
+         *         додатне число, якщо ця орхідея іде пізніше за other
          */
         @Override
-        public int compareTo(Oak other) {
-            // Спочатку порівнюємо за видом (за зростанням)
-            int speciesComparison = this.species.compareTo(other.species);
-            if (speciesComparison != 0) {
-                return speciesComparison;
+        public int compareTo(Orchid other) {
+            // Спочатку порівнюємо за родом (за зростанням)
+            int genusComparison = this.genus.compareTo(other.genus);
+            if (genusComparison != 0) {
+                return genusComparison;
             }
-            // Якщо види однакові, порівнюємо за віком (за спаданням - other порівнюється з this)
-            return other.age.compareTo(this.age);
+            // Якщо роди однакові, порівнюємо за кількістю квіток (за спаданням - other порівнюється з this)
+            return other.flowerCount.compareTo(this.flowerCount);
         }
 
         /**
-         * Повертає рядкове представлення дуба.
+         * Повертає рядкове представлення орхідеї.
          * Хеш-код додано, щоб у логах було видно, від чого залежить порядок елементів у HashMap.
          *
-         * @return рядок у форматі Oak{species='...', age=..., hashCode=...}
+         * @return рядок у форматі Orchid{genus='...', flowerCount=..., hashCode=...}
          */
         @Override
         public String toString() {
-            return "Oak{species='" + species + "', age=" + age + ", hashCode=" + hashCode() + "}";
+            return "Orchid{genus='" + genus + "', flowerCount=" + flowerCount + ", hashCode=" + hashCode() + "}";
         }
     }
 
     /**
      * Конструктор, який ініціалізує об'єкт готовими даними.
      *
-     * @param hashMap HashMap з початковими даними (ключ: Oak, значення: місце зростання)
-     * @param treeMap TreeMap з початковими даними (ключ: Oak, значення: місце зростання)
+     * @param hashMap HashMap з початковими даними (ключ: Orchid, значення: квіткова крамниця)
+     * @param linkedHashMap LinkedHashMap з початковими даними (ключ: Orchid, значення: квіткова крамниця)
      */
-    BasicDataOperationsUsingMap(HashMap<Oak, String> hashMap, TreeMap<Oak, String> treeMap) {
+    BasicDataOperationsUsingMap(HashMap<Orchid, String> hashMap, LinkedHashMap<Orchid, String> linkedHashMap) {
         this.hashMap = hashMap;
-        this.treeMap = treeMap;
+        this.linkedHashMap = linkedHashMap;
     }
 
     /**
-     * Виконує комплекс операцій з HashMap і TreeMap: пошук, виведення, сортування, додавання, видалення.
+     * Виконує комплекс операцій з HashMap і LinkedHashMap: пошук, виведення, сортування, додавання, видалення.
      */
     public void executeDataOperations() {
         // Спочатку працюємо з HashMap
@@ -152,22 +156,30 @@ public class BasicDataOperationsUsingMap {
 
         System.out.println("Кінцевий розмір HashMap: " + hashMap.size());
 
-        // Потім обробляємо TreeMap
-        System.out.println("\n\n========= Операції з TreeMap =========");
-        System.out.println("Початковий розмір TreeMap: " + treeMap.size());
+        // Потім обробляємо LinkedHashMap
+        System.out.println("\n\n========= Операції з LinkedHashMap =========");
+        System.out.println("Початковий розмір LinkedHashMap: " + linkedHashMap.size());
 
-        findByKeyInTreeMap();
-        findByValueInTreeMap();
-        findMinMaxKeyInTreeMap();
+        // Пошук до сортування
+        findByKeyInLinkedHashMap();
+        findByValueInLinkedHashMap();
+        findMinMaxKeyInLinkedHashMap();
 
-        printTreeMap();
+        printLinkedHashMap();
+        sortLinkedHashMap();
+        printLinkedHashMap();
 
-        addEntryToTreeMap();
+        // Пошук після сортування
+        findByKeyInLinkedHashMap();
+        findByValueInLinkedHashMap();
+        findMinMaxKeyInLinkedHashMap();
 
-        removeByKeyFromTreeMap();
-        removeByValueFromTreeMap();
+        addEntryToLinkedHashMap();
 
-        System.out.println("Кінцевий розмір TreeMap: " + treeMap.size());
+        removeByKeyFromLinkedHashMap();
+        removeByValueFromLinkedHashMap();
+
+        System.out.println("Кінцевий розмір LinkedHashMap: " + linkedHashMap.size());
     }
 
     // ===== Методи для HashMap =====
@@ -180,7 +192,7 @@ public class BasicDataOperationsUsingMap {
         System.out.println("\n=== Пари ключ-значення в HashMap ===");
         long timeStart = System.nanoTime();
 
-        for (Map.Entry<Oak, String> entry : hashMap.entrySet()) {
+        for (Map.Entry<Orchid, String> entry : hashMap.entrySet()) {
             System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
         }
 
@@ -189,7 +201,7 @@ public class BasicDataOperationsUsingMap {
 
     /**
      * Сортує HashMap за ключами.
-     * Використовує Collections.sort() з природним порядком Oak (Oak.compareTo())
+     * Використовує Collections.sort() з природним порядком Orchid (Orchid.compareTo())
      * і перезаписує hashMap новою HashMap, заповненою у відсортованому порядку.
      *
      * <p>Увага: HashMap не зберігає порядок додавання, тому після сортування порядок
@@ -198,13 +210,13 @@ public class BasicDataOperationsUsingMap {
     private void sortHashMap() {
         long timeStart = System.nanoTime();
 
-        // Створюємо список ключів і сортуємо за природним порядком Oak
-        List<Oak> sortedKeys = new ArrayList<>(hashMap.keySet());
+        // Створюємо список ключів і сортуємо за природним порядком Orchid
+        List<Orchid> sortedKeys = new ArrayList<>(hashMap.keySet());
         Collections.sort(sortedKeys);
 
         // Створюємо нову HashMap і додаємо пари у порядку відсортованих ключів
-        HashMap<Oak, String> sortedHashMap = new HashMap<>();
-        for (Oak key : sortedKeys) {
+        HashMap<Orchid, String> sortedHashMap = new HashMap<>();
+        for (Orchid key : sortedKeys) {
             sortedHashMap.put(key, hashMap.get(key));
         }
 
@@ -216,7 +228,7 @@ public class BasicDataOperationsUsingMap {
 
     /**
      * Здійснює пошук елемента за ключем в HashMap.
-     * Використовує Oak.hashCode() для вибору кошика та Oak.equals() для порівняння ключів.
+     * Використовує Orchid.hashCode() для вибору кошика та Orchid.equals() для порівняння ключів.
      */
     void findByKeyInHashMap() {
         long timeStart = System.nanoTime();
@@ -227,7 +239,7 @@ public class BasicDataOperationsUsingMap {
 
         if (found) {
             String value = hashMap.get(KEY_TO_SEARCH_AND_DELETE);
-            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' знайдено. Місце зростання: " + value);
+            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' знайдено. Квіткова крамниця: " + value);
         } else {
             System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' відсутній в HashMap.");
         }
@@ -241,21 +253,21 @@ public class BasicDataOperationsUsingMap {
         long timeStart = System.nanoTime();
 
         // Створюємо список пар та сортуємо його за значеннями
-        List<Map.Entry<Oak, String>> entries = new ArrayList<>(hashMap.entrySet());
-        Collections.sort(entries, CUSTOM_COMPARATOR);
+        List<Map.Entry<Orchid, String>> entries = new ArrayList<>(hashMap.entrySet());
+        Collections.sort(entries, FLOWER_SHOP_COMPARATOR);
 
         // Тимчасова пара для пошуку: ключ не потрібен, порівнюється лише значення
-        Map.Entry<Oak, String> searchEntry = new AbstractMap.SimpleEntry<>(null, VALUE_TO_SEARCH_AND_DELETE);
+        Map.Entry<Orchid, String> searchEntry = new AbstractMap.SimpleEntry<>(null, VALUE_TO_SEARCH_AND_DELETE);
 
-        int position = Collections.binarySearch(entries, searchEntry, CUSTOM_COMPARATOR);
+        int position = Collections.binarySearch(entries, searchEntry, FLOWER_SHOP_COMPARATOR);
 
         PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в HashMap");
 
         if (position >= 0) {
-            Map.Entry<Oak, String> foundEntry = entries.get(position);
-            System.out.println("Місце зростання '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Дуб: " + foundEntry.getKey());
+            Map.Entry<Orchid, String> foundEntry = entries.get(position);
+            System.out.println("Квіткову крамницю '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Орхідея: " + foundEntry.getKey());
         } else {
-            System.out.println("Місце зростання '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутнє в HashMap.");
+            System.out.println("Квіткова крамниця '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутня в HashMap.");
         }
     }
 
@@ -272,8 +284,8 @@ public class BasicDataOperationsUsingMap {
 
         long timeStart = System.nanoTime();
 
-        Oak minKey = Collections.min(hashMap.keySet());
-        Oak maxKey = Collections.max(hashMap.keySet());
+        Orchid minKey = Collections.min(hashMap.keySet());
+        Orchid maxKey = Collections.max(hashMap.keySet());
 
         PerformanceTracker.displayOperationTime(timeStart, "визначення найменшого й найбільшого ключа в HashMap");
 
@@ -290,7 +302,7 @@ public class BasicDataOperationsUsingMap {
 
         PerformanceTracker.displayOperationTime(timeStart, "додавання запису до HashMap");
 
-        System.out.println("Додано новий запис: дуб='" + KEY_TO_ADD + "', місце зростання='" + VALUE_TO_ADD + "'");
+        System.out.println("Додано новий запис: орхідея='" + KEY_TO_ADD + "', квіткова крамниця='" + VALUE_TO_ADD + "'");
     }
 
     /**
@@ -304,7 +316,7 @@ public class BasicDataOperationsUsingMap {
         PerformanceTracker.displayOperationTime(timeStart, "видалення за ключем з HashMap");
 
         if (removedValue != null) {
-            System.out.println("Видалено запис з ключем '" + KEY_TO_SEARCH_AND_DELETE + "'. Місце зростання було: " + removedValue);
+            System.out.println("Видалено запис з ключем '" + KEY_TO_SEARCH_AND_DELETE + "'. Квіткова крамниця була: " + removedValue);
         } else {
             System.out.println("Ключ '" + KEY_TO_SEARCH_AND_DELETE + "' не знайдено для видалення.");
         }
@@ -312,183 +324,231 @@ public class BasicDataOperationsUsingMap {
 
     /**
      * Видаляє записи з HashMap за значенням.
+     * Спочатку збирає ключі в окремий список, а потім видаляє їх: видалення під час
+     * перебору entrySet() викликало б ConcurrentModificationException.
      */
     void removeByValueFromHashMap() {
         long timeStart = System.nanoTime();
 
-        List<Oak> keysToRemove = new ArrayList<>();
-        for (Map.Entry<Oak, String> entry : hashMap.entrySet()) {
+        List<Orchid> keysToRemove = new ArrayList<>();
+        for (Map.Entry<Orchid, String> entry : hashMap.entrySet()) {
             if (VALUE_TO_SEARCH_AND_DELETE.equals(entry.getValue())) {
                 keysToRemove.add(entry.getKey());
             }
         }
 
-        for (Oak key : keysToRemove) {
+        for (Orchid key : keysToRemove) {
             hashMap.remove(key);
         }
 
         PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з HashMap");
 
-        System.out.println("Видалено " + keysToRemove.size() + " записів з місцем зростання '" + VALUE_TO_SEARCH_AND_DELETE + "'");
+        System.out.println("Видалено " + keysToRemove.size() + " записів з квітковою крамницею '" + VALUE_TO_SEARCH_AND_DELETE + "'");
     }
 
-    // ===== Методи для TreeMap =====
+    // ===== Методи для LinkedHashMap =====
 
     /**
-     * Виводить вміст TreeMap.
-     * TreeMap завжди впорядкована за ключами (вид за зростанням, вік за спаданням).
+     * Виводить вміст LinkedHashMap.
+     * LinkedHashMap зберігає порядок додавання пар: до сортування він залежить від порядку,
+     * у якому Map.of() віддала пари, а після сортування збігається з порядком ключів.
      */
-    private void printTreeMap() {
-        System.out.println("\n=== Пари ключ-значення в TreeMap ===");
+    private void printLinkedHashMap() {
+        System.out.println("\n=== Пари ключ-значення в LinkedHashMap ===");
         long timeStart = System.nanoTime();
 
-        for (Map.Entry<Oak, String> entry : treeMap.entrySet()) {
+        for (Map.Entry<Orchid, String> entry : linkedHashMap.entrySet()) {
             System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
         }
 
-        PerformanceTracker.displayOperationTime(timeStart, "виведення пар ключ-значення в TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "виведення пар ключ-значення в LinkedHashMap");
     }
 
     /**
-     * Здійснює пошук елемента за ключем в TreeMap.
-     * Використовує Oak.compareTo() для навігації по червоно-чорному дереву.
+     * Сортує LinkedHashMap за ключами.
+     * Використовує Collections.sort() з природним порядком Orchid (Orchid.compareTo())
+     * і перезаписує linkedHashMap новою LinkedHashMap, заповненою у відсортованому порядку.
+     *
+     * <p>LinkedHashMap запам'ятовує порядок додавання, тому після сортування пари
+     * виводяться в порядку ключів (рід за зростанням, кількість квіток за спаданням).</p>
      */
-    void findByKeyInTreeMap() {
+    private void sortLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        boolean found = treeMap.containsKey(KEY_TO_SEARCH_AND_DELETE);
+        // Створюємо список ключів і сортуємо за природним порядком Orchid
+        List<Orchid> sortedKeys = new ArrayList<>(linkedHashMap.keySet());
+        Collections.sort(sortedKeys);
 
-        PerformanceTracker.displayOperationTime(timeStart, "пошук за ключем в TreeMap");
+        // Створюємо нову LinkedHashMap і додаємо пари у порядку відсортованих ключів
+        LinkedHashMap<Orchid, String> sortedLinkedHashMap = new LinkedHashMap<>();
+        for (Orchid key : sortedKeys) {
+            sortedLinkedHashMap.put(key, linkedHashMap.get(key));
+        }
+
+        // Перезаписуємо оригінальну linkedHashMap
+        linkedHashMap = sortedLinkedHashMap;
+        // Тепер порядок додавання збігається з порядком ключів
+        linkedHashMapSorted = true;
+
+        PerformanceTracker.displayOperationTime(timeStart, "сортування LinkedHashMap за ключами");
+    }
+
+    /**
+     * Здійснює пошук елемента за ключем в LinkedHashMap.
+     * Використовує Orchid.hashCode() для вибору кошика та Orchid.equals() для порівняння ключів.
+     */
+    void findByKeyInLinkedHashMap() {
+        long timeStart = System.nanoTime();
+
+        boolean found = linkedHashMap.containsKey(KEY_TO_SEARCH_AND_DELETE);
+
+        PerformanceTracker.displayOperationTime(timeStart, "пошук за ключем в LinkedHashMap");
 
         if (found) {
-            String value = treeMap.get(KEY_TO_SEARCH_AND_DELETE);
-            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' знайдено. Місце зростання: " + value);
+            String value = linkedHashMap.get(KEY_TO_SEARCH_AND_DELETE);
+            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' знайдено. Квіткова крамниця: " + value);
         } else {
-            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' відсутній в TreeMap.");
+            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' відсутній в LinkedHashMap.");
         }
     }
 
     /**
-     * Здійснює пошук елемента за значенням в TreeMap.
+     * Здійснює пошук елемента за значенням в LinkedHashMap.
      * Сортує список Map.Entry за значеннями та використовує бінарний пошук.
      */
-    void findByValueInTreeMap() {
+    void findByValueInLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        List<Map.Entry<Oak, String>> entries = new ArrayList<>(treeMap.entrySet());
-        Collections.sort(entries, CUSTOM_COMPARATOR);
+        // Створюємо список пар та сортуємо його за значеннями
+        List<Map.Entry<Orchid, String>> entries = new ArrayList<>(linkedHashMap.entrySet());
+        Collections.sort(entries, FLOWER_SHOP_COMPARATOR);
 
-        Map.Entry<Oak, String> searchEntry = new AbstractMap.SimpleEntry<>(null, VALUE_TO_SEARCH_AND_DELETE);
+        // Тимчасова пара для пошуку: ключ не потрібен, порівнюється лише значення
+        Map.Entry<Orchid, String> searchEntry = new AbstractMap.SimpleEntry<>(null, VALUE_TO_SEARCH_AND_DELETE);
 
-        int position = Collections.binarySearch(entries, searchEntry, CUSTOM_COMPARATOR);
+        int position = Collections.binarySearch(entries, searchEntry, FLOWER_SHOP_COMPARATOR);
 
-        PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в LinkedHashMap");
 
         if (position >= 0) {
-            Map.Entry<Oak, String> foundEntry = entries.get(position);
-            System.out.println("Місце зростання '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Дуб: " + foundEntry.getKey());
+            Map.Entry<Orchid, String> foundEntry = entries.get(position);
+            System.out.println("Квіткову крамницю '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Орхідея: " + foundEntry.getKey());
         } else {
-            System.out.println("Місце зростання '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутнє в TreeMap.");
+            System.out.println("Квіткова крамниця '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутня в LinkedHashMap.");
         }
     }
 
     /**
-     * Визначає найменший і найбільший ключі в TreeMap.
-     * TreeMap реалізує SequencedMap (Java 21) і впорядкована за Oak.compareTo(),
-     * тому перший і останній записи - це найменший і найбільший ключі; перебір не потрібен.
+     * Визначає найменший і найбільший ключі в LinkedHashMap.
+     * LinkedHashMap реалізує SequencedMap (Java 21), але її порядок - це порядок додавання.
+     * Тому firstEntry() і lastEntry() дають найменший і найбільший ключі лише після сортування - O(1);
+     * до сортування потрібен перебір усіх ключів - O(n).
      */
-    void findMinMaxKeyInTreeMap() {
-        if (treeMap.isEmpty()) {
-            System.out.println("TreeMap порожня: найменшого й найбільшого ключа немає.");
+    void findMinMaxKeyInLinkedHashMap() {
+        if (linkedHashMap.isEmpty()) {
+            System.out.println("LinkedHashMap порожня: найменшого й найбільшого ключа немає.");
             return;
         }
 
         long timeStart = System.nanoTime();
 
-        Oak minKey = treeMap.firstEntry().getKey();
-        Oak maxKey = treeMap.lastEntry().getKey();
+        Orchid minKey;
+        Orchid maxKey;
+        if (linkedHashMapSorted) {
+            // Порядок додавання збігається з порядком ключів - перебір не потрібен
+            minKey = linkedHashMap.firstEntry().getKey();
+            maxKey = linkedHashMap.lastEntry().getKey();
+        } else {
+            // Порядок додавання не пов'язаний з compareTo() - потрібен перебір
+            minKey = Collections.min(linkedHashMap.keySet());
+            maxKey = Collections.max(linkedHashMap.keySet());
+        }
 
-        PerformanceTracker.displayOperationTime(timeStart, "визначення найменшого й найбільшого ключа в TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "визначення найменшого й найбільшого ключа в LinkedHashMap");
 
         System.out.println("Найменший ключ: " + minKey + ", найбільший ключ: " + maxKey);
     }
 
     /**
-     * Додає новий запис до TreeMap.
+     * Додає новий запис до LinkedHashMap.
+     * Новий ключ додається в кінець, тому порядок ключів порушується і прапорець скидається.
      */
-    void addEntryToTreeMap() {
+    void addEntryToLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        treeMap.put(KEY_TO_ADD, VALUE_TO_ADD);
+        linkedHashMap.put(KEY_TO_ADD, VALUE_TO_ADD);
+        linkedHashMapSorted = false;
 
-        PerformanceTracker.displayOperationTime(timeStart, "додавання запису до TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "додавання запису до LinkedHashMap");
 
-        System.out.println("Додано новий запис: дуб='" + KEY_TO_ADD + "', місце зростання='" + VALUE_TO_ADD + "'");
+        System.out.println("Додано новий запис: орхідея='" + KEY_TO_ADD + "', квіткова крамниця='" + VALUE_TO_ADD + "'");
     }
 
     /**
-     * Видаляє запис з TreeMap за ключем.
+     * Видаляє запис з LinkedHashMap за ключем.
      */
-    void removeByKeyFromTreeMap() {
+    void removeByKeyFromLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        String removedValue = treeMap.remove(KEY_TO_SEARCH_AND_DELETE);
+        String removedValue = linkedHashMap.remove(KEY_TO_SEARCH_AND_DELETE);
 
-        PerformanceTracker.displayOperationTime(timeStart, "видалення за ключем з TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "видалення за ключем з LinkedHashMap");
 
         if (removedValue != null) {
-            System.out.println("Видалено запис з ключем '" + KEY_TO_SEARCH_AND_DELETE + "'. Місце зростання було: " + removedValue);
+            System.out.println("Видалено запис з ключем '" + KEY_TO_SEARCH_AND_DELETE + "'. Квіткова крамниця була: " + removedValue);
         } else {
             System.out.println("Ключ '" + KEY_TO_SEARCH_AND_DELETE + "' не знайдено для видалення.");
         }
     }
 
     /**
-     * Видаляє записи з TreeMap за значенням.
+     * Видаляє записи з LinkedHashMap за значенням.
+     * Спочатку збирає ключі в окремий список, а потім видаляє їх: видалення під час
+     * перебору entrySet() викликало б ConcurrentModificationException.
      */
-    void removeByValueFromTreeMap() {
+    void removeByValueFromLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        List<Oak> keysToRemove = new ArrayList<>();
-        for (Map.Entry<Oak, String> entry : treeMap.entrySet()) {
+        List<Orchid> keysToRemove = new ArrayList<>();
+        for (Map.Entry<Orchid, String> entry : linkedHashMap.entrySet()) {
             if (VALUE_TO_SEARCH_AND_DELETE.equals(entry.getValue())) {
                 keysToRemove.add(entry.getKey());
             }
         }
 
-        for (Oak key : keysToRemove) {
-            treeMap.remove(key);
+        for (Orchid key : keysToRemove) {
+            linkedHashMap.remove(key);
         }
 
-        PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з LinkedHashMap");
 
-        System.out.println("Видалено " + keysToRemove.size() + " записів з місцем зростання '" + VALUE_TO_SEARCH_AND_DELETE + "'");
+        System.out.println("Видалено " + keysToRemove.size() + " записів з квітковою крамницею '" + VALUE_TO_SEARCH_AND_DELETE + "'");
     }
 
     /**
      * Головний метод для запуску програми.
      */
     public static void main(String[] args) {
-        // Початкові дані (ключ: Oak, значення: місце зростання).
+        // Початкові дані (ключ: Orchid, значення: квіткова крамниця).
         // Map.of() створює незмінну Map, тому з неї створюються копії, які можна змінювати.
-        Map<Oak, String> oaks = Map.of(
-            new Oak("Дуб звичайний", 250), "Софіївка",
-            new Oak("Дуб червоний", 80), "Голосіївський парк",
-            new Oak("Дуб скельний", 120), "Холодний Яр",
-            new Oak("Дуб звичайний", 1000), "Холодний Яр",
-            new Oak("Дуб пухнастий", 60), "Ботанічний сад імені Фоміна",
-            new Oak("Дуб болотяний", 45), "Софіївка",
-            new Oak("Дуб червоний", 35), "Ботанічний сад імені Фоміна",
-            new Oak("Дуб австрійський", 90), "Олександрія",
-            new Oak("Дуб звичайний", 500), "Олександрія",
-            new Oak("Дуб скельний", 300), "Тростянець"
+        Map<Orchid, String> orchids = Map.of(
+            new Orchid("Фаленопсис", 12), "Флора",
+            new Orchid("Дендробіум", 20), "Букет",
+            new Orchid("Каттлея", 5), "Лотос",
+            new Orchid("Фаленопсис", 8), "Камелія",
+            new Orchid("Ванда", 15), "Флора",
+            new Orchid("Онцидіум", 30), "Магнолія",
+            new Orchid("Дендробіум", 14), "Едельвейс",
+            new Orchid("Цимбідіум", 10), "Квітковий рай",
+            new Orchid("Мільтонія", 7), "Ромашка",
+            new Orchid("Каттлея", 3), "Верес"
         );
 
-        HashMap<Oak, String> hashMap = new HashMap<>(oaks);
-        TreeMap<Oak, String> treeMap = new TreeMap<>(oaks);
+        HashMap<Orchid, String> hashMap = new HashMap<>(orchids);
+        LinkedHashMap<Orchid, String> linkedHashMap = new LinkedHashMap<>(orchids);
 
         // Створюємо об'єкт і виконуємо операції
-        BasicDataOperationsUsingMap operations = new BasicDataOperationsUsingMap(hashMap, treeMap);
+        BasicDataOperationsUsingMap operations = new BasicDataOperationsUsingMap(hashMap, linkedHashMap);
         operations.executeDataOperations();
     }
 }

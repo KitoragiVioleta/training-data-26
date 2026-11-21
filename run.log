@@ -1,0 +1,122 @@
+========= Операції з HashMap =========
+Початковий розмір HashMap: 10
+
+========= Тривалість операції 'пошук за ключем в HashMap': 466700 нс =========
+Елемент з ключем 'Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}' знайдено. Квіткова крамниця: Флора
+
+========= Тривалість операції 'бінарний пошук за значенням в HashMap': 255400 нс =========
+Квіткову крамницю 'Флора' знайдено. Орхідея: Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594}
+
+========= Тривалість операції 'визначення найменшого й найбільшого ключа в HashMap': 67800 нс =========
+Найменший ключ: Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}, найбільший ключ: Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648}
+
+=== Пари ключ-значення в HashMap ===
+  Orchid{genus='Дендробіум', flowerCount=20, hashCode=1054954560} -> Букет
+  Orchid{genus='Онцидіум', flowerCount=30, hashCode=926100178} -> Магнолія
+  Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594} -> Флора
+  Orchid{genus='Мільтонія', flowerCount=7, hashCode=53323192} -> Ромашка
+  Orchid{genus='Фаленопсис', flowerCount=8, hashCode=1763605590} -> Камелія
+  Orchid{genus='Дендробіум', flowerCount=14, hashCode=1054954554} -> Едельвейс
+  Orchid{genus='Каттлея', flowerCount=3, hashCode=396964228} -> Верес
+  Orchid{genus='Ванда', flowerCount=15, hashCode=790209300} -> Флора
+  Orchid{genus='Каттлея', flowerCount=5, hashCode=396964230} -> Лотос
+  Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648} -> Квітковий рай
+
+========= Тривалість операції 'виведення пар ключ-значення в HashMap': 489500 нс =========
+
+========= Тривалість операції 'сортування HashMap за ключами': 643100 нс =========
+
+=== Пари ключ-значення в HashMap ===
+  Orchid{genus='Дендробіум', flowerCount=20, hashCode=1054954560} -> Букет
+  Orchid{genus='Онцидіум', flowerCount=30, hashCode=926100178} -> Магнолія
+  Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594} -> Флора
+  Orchid{genus='Мільтонія', flowerCount=7, hashCode=53323192} -> Ромашка
+  Orchid{genus='Фаленопсис', flowerCount=8, hashCode=1763605590} -> Камелія
+  Orchid{genus='Дендробіум', flowerCount=14, hashCode=1054954554} -> Едельвейс
+  Orchid{genus='Ванда', flowerCount=15, hashCode=790209300} -> Флора
+  Orchid{genus='Каттлея', flowerCount=3, hashCode=396964228} -> Верес
+  Orchid{genus='Каттлея', flowerCount=5, hashCode=396964230} -> Лотос
+  Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648} -> Квітковий рай
+
+========= Тривалість операції 'виведення пар ключ-значення в HashMap': 296900 нс =========
+
+========= Тривалість операції 'пошук за ключем в HashMap': 15500 нс =========
+Елемент з ключем 'Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}' знайдено. Квіткова крамниця: Флора
+
+========= Тривалість операції 'бінарний пошук за значенням в HashMap': 33200 нс =========
+Квіткову крамницю 'Флора' знайдено. Орхідея: Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594}
+
+========= Тривалість операції 'визначення найменшого й найбільшого ключа в HashMap': 11800 нс =========
+Найменший ключ: Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}, найбільший ключ: Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648}
+
+========= Тривалість операції 'додавання запису до HashMap': 12800 нс =========
+Додано новий запис: орхідея='Orchid{genus='Пафіопедилум', flowerCount=2, hashCode=-2123795997}', квіткова крамниця='Букет'
+
+========= Тривалість операції 'видалення за ключем з HashMap': 18300 нс =========
+Видалено запис з ключем 'Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}'. Квіткова крамниця була: Флора
+
+========= Тривалість операції 'видалення за значенням з HashMap': 16700 нс =========
+Видалено 1 записів з квітковою крамницею 'Флора'
+Кінцевий розмір HashMap: 9
+
+
+========= Операції з LinkedHashMap =========
+Початковий розмір LinkedHashMap: 10
+
+========= Тривалість операції 'пошук за ключем в LinkedHashMap': 15300 нс =========
+Елемент з ключем 'Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}' знайдено. Квіткова крамниця: Флора
+
+========= Тривалість операції 'бінарний пошук за значенням в LinkedHashMap': 122200 нс =========
+Квіткову крамницю 'Флора' знайдено. Орхідея: Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594}
+
+========= Тривалість операції 'визначення найменшого й найбільшого ключа в LinkedHashMap': 185200 нс =========
+Найменший ключ: Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}, найбільший ключ: Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648}
+
+=== Пари ключ-значення в LinkedHashMap ===
+  Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594} -> Флора
+  Orchid{genus='Мільтонія', flowerCount=7, hashCode=53323192} -> Ромашка
+  Orchid{genus='Фаленопсис', flowerCount=8, hashCode=1763605590} -> Камелія
+  Orchid{genus='Каттлея', flowerCount=5, hashCode=396964230} -> Лотос
+  Orchid{genus='Каттлея', flowerCount=3, hashCode=396964228} -> Верес
+  Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648} -> Квітковий рай
+  Orchid{genus='Ванда', flowerCount=15, hashCode=790209300} -> Флора
+  Orchid{genus='Дендробіум', flowerCount=20, hashCode=1054954560} -> Букет
+  Orchid{genus='Онцидіум', flowerCount=30, hashCode=926100178} -> Магнолія
+  Orchid{genus='Дендробіум', flowerCount=14, hashCode=1054954554} -> Едельвейс
+
+========= Тривалість операції 'виведення пар ключ-значення в LinkedHashMap': 479700 нс =========
+
+========= Тривалість операції 'сортування LinkedHashMap за ключами': 117800 нс =========
+
+=== Пари ключ-значення в LinkedHashMap ===
+  Orchid{genus='Ванда', flowerCount=15, hashCode=790209300} -> Флора
+  Orchid{genus='Дендробіум', flowerCount=20, hashCode=1054954560} -> Букет
+  Orchid{genus='Дендробіум', flowerCount=14, hashCode=1054954554} -> Едельвейс
+  Orchid{genus='Каттлея', flowerCount=5, hashCode=396964230} -> Лотос
+  Orchid{genus='Каттлея', flowerCount=3, hashCode=396964228} -> Верес
+  Orchid{genus='Мільтонія', flowerCount=7, hashCode=53323192} -> Ромашка
+  Orchid{genus='Онцидіум', flowerCount=30, hashCode=926100178} -> Магнолія
+  Orchid{genus='Фаленопсис', flowerCount=12, hashCode=1763605594} -> Флора
+  Orchid{genus='Фаленопсис', flowerCount=8, hashCode=1763605590} -> Камелія
+  Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648} -> Квітковий рай
+
+========= Тривалість операції 'виведення пар ключ-значення в LinkedHashMap': 547200 нс =========
+
+========= Тривалість операції 'пошук за ключем в LinkedHashMap': 21300 нс =========
+Елемент з ключем 'Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}' знайдено. Квіткова крамниця: Флора
+
+========= Тривалість операції 'бінарний пошук за значенням в LinkedHashMap': 30700 нс =========
+Квіткову крамницю 'Флора' знайдено. Орхідея: Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}
+
+========= Тривалість операції 'визначення найменшого й найбільшого ключа в LinkedHashMap': 551200 нс =========
+Найменший ключ: Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}, найбільший ключ: Orchid{genus='Цимбідіум', flowerCount=10, hashCode=591335648}
+
+========= Тривалість операції 'додавання запису до LinkedHashMap': 7900 нс =========
+Додано новий запис: орхідея='Orchid{genus='Пафіопедилум', flowerCount=2, hashCode=-2123795997}', квіткова крамниця='Букет'
+
+========= Тривалість операції 'видалення за ключем з LinkedHashMap': 16100 нс =========
+Видалено запис з ключем 'Orchid{genus='Ванда', flowerCount=15, hashCode=790209300}'. Квіткова крамниця була: Флора
+
+========= Тривалість операції 'видалення за значенням з LinkedHashMap': 16700 нс =========
+Видалено 1 записів з квітковою крамницею 'Флора'
+Кінцевий розмір LinkedHashMap: 9
